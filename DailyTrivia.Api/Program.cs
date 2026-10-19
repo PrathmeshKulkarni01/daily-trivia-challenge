@@ -21,12 +21,16 @@ builder.Services.AddDbContext<TriviaDbContext>(
     options => options.UseNpgsql(builder.Configuration["ConnectionStrings:TriviaDb"])
 );
 
+// replaced the hardcoded origin so it reads from config
+
+var allowOrigins = builder.Configuration["Cors:AllowedOrigins"]?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)?? new[]{ "http://localhost:5173", "http://localhost:5174" }
+
 builder.Services.AddCors(options =>{
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "http://localhost:5174") // Vite's default dev port
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins(allowOrigins) // Vite's default dev port
+            //   .AllowAnyHeader()
+            //   .AllowAnyMethod();
     });
 });
 
